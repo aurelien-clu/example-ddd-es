@@ -7,14 +7,14 @@ use crate::domain::commands::Command;
 use crate::domain::errors::Error;
 use crate::domain::events::Event;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Position {
     latitude: f64,
     longitude: f64,
     altitude: usize,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum Status {
     OnGround,
     InAir,
@@ -54,15 +54,37 @@ impl Aggregate for Plane {
         services: &Self::Services,
     ) -> Result<Vec<Self::Event>, Self::Error> {
         match command {
-            Command::Create { .. } => {
+            Command::Create { registration_id } => {
                 if self.registration_id != "" {
                     return Err(Error::AlreadyCreated);
                 }
-                Ok(vec![])
+                Ok(vec![Event::Created { registration_id }])
             }
-            Command::UpdatePosition { .. } => todo!(),
-            Command::TakeOff { .. } => todo!(),
-            Command::Land { .. } => todo!(),
+            Command::UpdatePosition {
+                latitude,
+                longitude,
+                altitude,
+            } => Ok(vec![Event::PositionedAt {
+                latitude,
+                longitude,
+                altitude,
+            }]),
+            Command::TakeOff => {
+                if self.status == Status::OnGround {
+                    Ok(vec![Event::TookOff])
+                } else {
+                    // TODO: call TowerControl service to ensure we can takeoff
+                    Err(Error::CannotTakeOff)
+                }
+            }
+            Command::Land => {
+                if self.status == Status::InAir {
+                    Ok(vec![Event::Landed])
+                } else {
+                    // TODO: call TowerControl service to ensure we can land
+                    Err(Error::CannotLand)
+                }
+            }
         }
     }
 
@@ -81,9 +103,9 @@ impl Aggregate for Plane {
                 };
                 self.last_position = Some(p);
             }
-            Event::TookOff { .. } => todo!(),
-            Event::Landed { .. } => todo!(),
-            Event::OnGround { .. } => todo!(),
+            Event::TookOff => self.status = Status::InAir,
+            Event::Landed => self.status = Status::OnGround,
+            Event::OnGround => self.status = Status::OnGround,
         }
     }
 }
