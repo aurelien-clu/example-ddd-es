@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use axum::extract::{FromRequest, FromRequestParts};
+use axum::extract::FromRequestParts;
 use std::collections::HashMap;
 use std::convert::Infallible;
 use axum::http::request::Parts;
@@ -13,7 +13,7 @@ const USER_AGENT_HDR: &str = "User-Agent";
 impl<B: Send> FromRequestParts<B> for MetadataExtension {
     type Rejection = Infallible;
 
-    async fn from_request_parts(parts: &mut Parts, state: &B) -> Result<Self, Self::Rejection> {
+    async fn from_request_parts(parts: &mut Parts, _state: &B) -> Result<Self, Self::Rejection> {
         // Here we are including the current date/time, the uri that was called and the user-agent
         // in a HashMap that we will submit as metadata with the command.
         let mut metadata = HashMap::default();
