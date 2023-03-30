@@ -2,24 +2,14 @@
 #![deny(clippy::all)]
 
 mod metadata_extension;
+mod routes;
 
-use std::sync::Arc;
-
-use axum::extract::{Extension, Path};
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::extract::Extension;
 use axum::routing::get;
-use axum::{Json, Router};
+use axum::Router;
 
-use axum::debug_handler;
-use cqrs_es::persist::ViewRepository;
-use postgres_es::{default_postgress_pool, PostgresCqrs, PostgresViewRepository};
-
-use crate::metadata_extension::MetadataExtension;
 use domain_bank::config::cqrs_framework;
-use domain_bank::domain::aggregate::BankAccount;
-use domain_bank::domain::commands::BankAccountCommand;
-use domain_bank::queries::BankAccountView;
+use postgres_es::default_postgress_pool;
 
 #[tokio::main]
 async fn main() {
@@ -38,7 +28,7 @@ async fn main() {
     let router = Router::new()
         .route(
             "/account/:account_id",
-            get(query_handler).post(command_handler),
+            get(routes::bank::query_handler).post(routes::bank::command_handler),
         )
         .layer(Extension(cqrs))
         .layer(Extension(account_query));
@@ -48,39 +38,4 @@ async fn main() {
         .serve(router.into_make_service())
         .await
         .unwrap();
-}
-
-// Serves as our query endpoint to respond with the materialized `BankAccountView`
-// for the requested account.
-async fn query_handler(
-    Path(account_id): Path<String>,
-    Extension(view_repo): Extension<Arc<PostgresViewRepository<BankAccountView, BankAccount>>>,
-) -> Response {
-    let view = match view_repo.load(&account_id).await {
-        Ok(view) => view,
-        Err(err) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()).into_response();
-        }
-    };
-    match view {
-        None => StatusCode::NOT_FOUND.into_response(),
-        Some(account_view) => (StatusCode::OK, Json(account_view)).into_response(),
-    }
-}
-
-// Serves as our command endpoint to make changes in a `BankAccount` aggregate.
-#[debug_handler]
-async fn command_handler(
-    Path(account_id): Path<String>,
-    Extension(cqrs): Extension<Arc<PostgresCqrs<BankAccount>>>,
-    MetadataExtension(metadata): MetadataExtension,
-    Json(command): Json<BankAccountCommand>,
-) -> Response {
-    match cqrs
-        .execute_with_metadata(&account_id, command, metadata)
-        .await
-    {
-        Ok(_) => StatusCode::NO_CONTENT.into_response(),
-        Err(err) => (StatusCode::BAD_REQUEST, err.to_string()).into_response(),
-    }
 }

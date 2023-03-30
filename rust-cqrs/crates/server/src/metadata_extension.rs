@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 use axum::extract::FromRequestParts;
+use axum::http::request::Parts;
 use std::collections::HashMap;
 use std::convert::Infallible;
-use axum::http::request::Parts;
 
 // This is a custom Axum extension that builds metadata from the inbound request.
 pub struct MetadataExtension(pub HashMap<String, String>);
