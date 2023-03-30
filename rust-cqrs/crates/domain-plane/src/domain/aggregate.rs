@@ -58,30 +58,31 @@ impl Aggregate for Plane {
                 if self.registration_id != "" {
                     return Err(Error::AlreadyCreated);
                 }
-                Ok(vec![Event::Created { registration_id }])
+                Ok(vec![Event::Created { registration_id }, Event::OnGround])
             }
             Command::UpdatePosition {
                 latitude,
                 longitude,
                 altitude,
             } => Ok(vec![Event::PositionedAt {
+                // TODO: should validate
                 latitude,
                 longitude,
                 altitude,
             }]),
             Command::TakeOff => {
                 if self.status == Status::OnGround {
+                    // TODO: call TowerControl service to ensure we can takeoff
                     Ok(vec![Event::TookOff])
                 } else {
-                    // TODO: call TowerControl service to ensure we can takeoff
                     Err(Error::CannotTakeOff)
                 }
             }
             Command::Land => {
                 if self.status == Status::InAir {
+                    // TODO: call TowerControl service to ensure we can land
                     Ok(vec![Event::Landed])
                 } else {
-                    // TODO: call TowerControl service to ensure we can land
                     Err(Error::CannotLand)
                 }
             }
