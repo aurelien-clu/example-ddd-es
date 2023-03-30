@@ -10,6 +10,8 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use axum::{Json, Router};
+
+use axum::debug_handler;
 use cqrs_es::persist::ViewRepository;
 use postgres_es::{default_postgress_pool, PostgresCqrs, PostgresViewRepository};
 
@@ -67,11 +69,12 @@ async fn query_handler(
 }
 
 // Serves as our command endpoint to make changes in a `BankAccount` aggregate.
+#[debug_handler]
 async fn command_handler(
     Path(account_id): Path<String>,
-    Json(command): Json<BankAccountCommand>,
     Extension(cqrs): Extension<Arc<PostgresCqrs<BankAccount>>>,
     MetadataExtension(metadata): MetadataExtension,
+    Json(command): Json<BankAccountCommand>,
 ) -> Response {
     match cqrs
         .execute_with_metadata(&account_id, command, metadata)
