@@ -18,5 +18,13 @@ CREATE TABLE account_query
     PRIMARY KEY (view_id)
 );
 
+CREATE TABLE plane_current_journey_query
+(
+    view_id text                        NOT NULL,
+    version           bigint CHECK (version >= 0) NOT NULL,
+    payload           json                        NOT NULL,
+    PRIMARY KEY (view_id)
+);
+
 CREATE USER demo_user WITH ENCRYPTED PASSWORD 'demo_pass';
 GRANT ALL PRIVILEGES ON DATABASE postgres TO demo_user;

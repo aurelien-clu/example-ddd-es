@@ -15,7 +15,10 @@ pub fn plane_cqrs_framework(
     Arc<PostgresViewRepository<CurrentJourneyView, Plane>>,
 ) {
     let logger_query = LoggingQuery {};
-    let view_repo = Arc::new(PostgresViewRepository::new("plane_query", pool.clone()));
+    let view_repo = Arc::new(PostgresViewRepository::new(
+        "plane_current_journey_query",
+        pool.clone(),
+    ));
     let mut current_journey_query = CurrentJourneyQuery::new(view_repo.clone());
 
     // Without a query error handler there will be no indication if an
