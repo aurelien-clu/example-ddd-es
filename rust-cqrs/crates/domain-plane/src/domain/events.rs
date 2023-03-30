@@ -2,8 +2,10 @@ use cqrs_es::DomainEvent;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum PlaneEvent {
-    Created,
+pub enum Event {
+    Created {
+        registration_id: String,
+    },
     OnGround,
     TookOff,
     Landed,
@@ -14,14 +16,14 @@ pub enum PlaneEvent {
     },
 }
 
-impl DomainEvent for PlaneEvent {
+impl DomainEvent for Event {
     fn event_type(&self) -> String {
         match self {
-            PlaneEvent::Created { .. } => "OnGround".to_string(),
-            PlaneEvent::OnGround { .. } => "OnGround".to_string(),
-            PlaneEvent::TookOff { .. } => "TookOff".to_string(),
-            PlaneEvent::Landed { .. } => "Landed".to_string(),
-            PlaneEvent::PositionedAt { .. } => "PositionedAt".to_string(),
+            Event::Created { .. } => "OnGround".to_string(),
+            Event::OnGround { .. } => "OnGround".to_string(),
+            Event::TookOff { .. } => "TookOff".to_string(),
+            Event::Landed { .. } => "Landed".to_string(),
+            Event::PositionedAt { .. } => "PositionedAt".to_string(),
         }
     }
 

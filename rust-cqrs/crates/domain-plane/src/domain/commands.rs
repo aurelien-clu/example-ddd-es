@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub enum PlaneCommand {
+pub enum Command {
     Create {
-        registration_code: String,
+        registration_id: String,
     },
     UpdatePosition {
         latitude: f64,
