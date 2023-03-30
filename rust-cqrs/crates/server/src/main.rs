@@ -13,13 +13,11 @@ use axum::{Json, Router};
 use cqrs_es::persist::ViewRepository;
 use postgres_es::{default_postgress_pool, PostgresCqrs, PostgresViewRepository};
 
+use crate::metadata_extension::MetadataExtension;
 use domain_bank::config::cqrs_framework;
 use domain_bank::domain::aggregate::BankAccount;
 use domain_bank::domain::commands::BankAccountCommand;
-use crate::metadata_extension::MetadataExtension;
 use domain_bank::queries::BankAccountView;
-
-
 
 #[tokio::main]
 async fn main() {
