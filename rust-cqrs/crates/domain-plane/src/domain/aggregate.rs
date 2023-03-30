@@ -9,13 +9,14 @@ use crate::domain::events::Event;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Position {
-    latitude: f64,
-    longitude: f64,
-    altitude: usize,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub altitude: usize,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
 pub enum Status {
+    #[default]
     OnGround,
     InAir,
 }

@@ -9,6 +9,7 @@ use axum::routing::get;
 use axum::Router;
 
 use domain_bank::config::cqrs_framework;
+use domain_plane::config::plane_cqrs_framework;
 use postgres_es::default_postgress_pool;
 
 #[tokio::main]
@@ -20,7 +21,8 @@ async fn main() {
     // The needed database tables are automatically configured with `docker-compose up -d`,
     // see init file at `/db/init.sql` for more.
     let pool = default_postgress_pool("postgresql://demo_user:demo_pass@localhost:5432/demo").await;
-    let (cqrs, account_query) = cqrs_framework(pool);
+    let (cqrs, account_query) = cqrs_framework(pool.clone());
+    let (cqrs2, current_journey_query) = plane_cqrs_framework(pool.clone());
 
     // Configure the Axum routes and services.
     // For this example a single logical endpoint is used and the HTTP method
@@ -31,7 +33,9 @@ async fn main() {
             get(routes::bank::query_handler).post(routes::bank::command_handler),
         )
         .layer(Extension(cqrs))
-        .layer(Extension(account_query));
+        .layer(Extension(account_query))
+        .layer(Extension(cqrs2))
+        .layer(Extension(current_journey_query));
 
     // Start the Axum server.
     axum::Server::bind(&"0.0.0.0:3030".parse().unwrap())
