@@ -32,6 +32,10 @@ async fn main() {
             "/account/:account_id",
             get(routes::bank::query_handler).post(routes::bank::command_handler),
         )
+        .route(
+            "/plane/:registration_id",
+            get(routes::plane::query_handler).post(routes::plane::command_handler),
+        )
         .layer(Extension(cqrs))
         .layer(Extension(account_query))
         .layer(Extension(cqrs2))
