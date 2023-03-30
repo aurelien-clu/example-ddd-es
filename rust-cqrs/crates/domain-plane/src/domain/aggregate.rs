@@ -52,7 +52,7 @@ impl Aggregate for Plane {
     async fn handle(
         &self,
         command: Self::Command,
-        services: &Self::Services,
+        _services: &Self::Services,
     ) -> Result<Vec<Self::Event>, Self::Error> {
         match command {
             Command::Register { registration_id } => {
