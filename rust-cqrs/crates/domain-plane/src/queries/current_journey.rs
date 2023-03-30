@@ -19,7 +19,7 @@ pub type CurrentJourneyQuery =
 impl View<Plane> for CurrentJourneyView {
     fn update(&mut self, event: &EventEnvelope<Plane>) {
         match &event.payload {
-            Event::Created { registration_id } => self.registration_id = registration_id.clone(),
+            Event::Registered { registration_id } => self.registration_id = registration_id.clone(),
             Event::OnGround => todo!(),
             Event::TookOff => todo!(),
             Event::Landed => todo!(),

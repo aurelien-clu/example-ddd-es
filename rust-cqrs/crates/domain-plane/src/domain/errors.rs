@@ -4,6 +4,6 @@ pub enum Error {
     CannotTakeOff,
     #[error("Unable to land in current state")]
     CannotLand,
-    #[error("Plane is already created, cannot its identification")]
-    AlreadyCreated,
+    #[error("Cannot register again, identification is immutable")]
+    AlreadyRegistered,
 }

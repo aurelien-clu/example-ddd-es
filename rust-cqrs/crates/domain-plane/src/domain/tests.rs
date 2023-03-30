@@ -12,11 +12,11 @@ mod aggregate_tests {
     #[test]
     fn test_a_plane_should_be_created() {
         let id = "F-TEST";
-        let command = Command::Create {
+        let command = Command::Register {
             registration_id: id.to_string(),
         };
         let expected = vec![
-            Event::Created {
+            Event::Registered {
                 registration_id: id.to_string(),
             },
             Event::OnGround,
@@ -31,7 +31,7 @@ mod aggregate_tests {
     #[test]
     fn test_a_plane_should_update_its_position() {
         let past = vec![
-            Event::Created {
+            Event::Registered {
                 registration_id: "F-TEST".to_string(),
             },
             Event::OnGround,
@@ -56,7 +56,7 @@ mod aggregate_tests {
     #[test]
     fn test_a_plane_should_take_off() {
         let past = vec![
-            Event::Created {
+            Event::Registered {
                 registration_id: "F-TEST".to_string(),
             },
             Event::OnGround,
@@ -73,7 +73,7 @@ mod aggregate_tests {
     #[test]
     fn test_a_plane_should_land() {
         let past = vec![
-            Event::Created {
+            Event::Registered {
                 registration_id: "F-TEST".to_string(),
             },
             Event::OnGround,
@@ -91,7 +91,7 @@ mod aggregate_tests {
     #[test]
     fn test_a_plane_should_not_take_off_if_not_on_ground() {
         let past = vec![
-            Event::Created {
+            Event::Registered {
                 registration_id: "F-TEST".to_string(),
             },
             Event::OnGround,
@@ -108,7 +108,7 @@ mod aggregate_tests {
     #[test]
     fn test_a_plane_should_not_land_if_not_in_the_air() {
         let past = vec![
-            Event::Created {
+            Event::Registered {
                 registration_id: "F-TEST".to_string(),
             },
             Event::OnGround,
@@ -119,5 +119,23 @@ mod aggregate_tests {
             .given(past)
             .when(command)
             .then_expect_error(Error::CannotLand);
+    }
+
+    #[test]
+    fn test_a_plane_should_not_register_twice() {
+        let past = vec![
+            Event::Registered {
+                registration_id: "F-TEST".to_string(),
+            },
+            Event::OnGround,
+        ];
+        let command = Command::Register {
+            registration_id: "F-NOPE".to_string(),
+        };
+        let services = ();
+        PlaneTestFramework::with(services)
+            .given(past)
+            .when(command)
+            .then_expect_error(Error::AlreadyRegistered);
     }
 }

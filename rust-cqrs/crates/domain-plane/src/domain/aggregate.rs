@@ -55,11 +55,11 @@ impl Aggregate for Plane {
         services: &Self::Services,
     ) -> Result<Vec<Self::Event>, Self::Error> {
         match command {
-            Command::Create { registration_id } => {
+            Command::Register { registration_id } => {
                 if self.registration_id != "" {
-                    return Err(Error::AlreadyCreated);
+                    return Err(Error::AlreadyRegistered);
                 }
-                Ok(vec![Event::Created { registration_id }, Event::OnGround])
+                Ok(vec![Event::Registered { registration_id }, Event::OnGround])
             }
             Command::UpdatePosition {
                 latitude,
@@ -92,7 +92,7 @@ impl Aggregate for Plane {
 
     fn apply(&mut self, event: Self::Event) {
         match event {
-            Event::Created { registration_id } => self.registration_id = registration_id,
+            Event::Registered { registration_id } => self.registration_id = registration_id,
             Event::PositionedAt {
                 latitude,
                 longitude,

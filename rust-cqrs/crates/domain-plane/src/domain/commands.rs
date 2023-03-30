@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Command {
-    Create {
+    Register {
         registration_id: String,
     },
     UpdatePosition {

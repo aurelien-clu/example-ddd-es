@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Event {
-    Created {
+    Registered {
         registration_id: String,
     },
     OnGround,
@@ -19,7 +19,7 @@ pub enum Event {
 impl DomainEvent for Event {
     fn event_type(&self) -> String {
         match self {
-            Event::Created { .. } => "OnGround".to_string(),
+            Event::Registered { .. } => "Registered".to_string(),
             Event::OnGround { .. } => "OnGround".to_string(),
             Event::TookOff { .. } => "TookOff".to_string(),
             Event::Landed { .. } => "Landed".to_string(),
