@@ -5,7 +5,6 @@ edition = "2021"
 
 
 [dependencies]
-domain-bank = { path = "../domain-bank" }
 domain-plane = { path = "../domain-plane" }
 
 cqrs-es = "0.4.5"

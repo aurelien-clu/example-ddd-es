@@ -10,14 +10,6 @@ CREATE TABLE events
     PRIMARY KEY (aggregate_type, aggregate_id, sequence)
 );
 
-CREATE TABLE account_query
-(
-    view_id text                        NOT NULL,
-    version           bigint CHECK (version >= 0) NOT NULL,
-    payload           json                        NOT NULL,
-    PRIMARY KEY (view_id)
-);
-
 CREATE TABLE plane_current_journey_query
 (
     view_id text                        NOT NULL,

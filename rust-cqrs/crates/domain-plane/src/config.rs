@@ -8,7 +8,7 @@ use crate::domain::aggregate::Plane;
 use crate::queries::current_journey::{CurrentJourneyQuery, CurrentJourneyView};
 use crate::queries::logger::LoggingQuery;
 
-pub fn plane_cqrs_framework(
+pub fn cqrs_framework(
     pool: Pool<Postgres>,
 ) -> (
     Arc<PostgresCqrs<Plane>>,

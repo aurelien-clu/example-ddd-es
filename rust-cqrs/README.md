@@ -5,5 +5,5 @@ docker-compose up -d
 
 cargo run
 
-./curl/test_api.sh
+./test/test_api_plane.sh
 ```
