@@ -87,42 +87,37 @@ mod aggregate_tests {
             .when(command)
             .then_expect_events(expected);
     }
-    //
-    // #[test]
-    // fn test_a_plane_should_not_take_off_if_not_on_ground() {
-    //     let past = vec![
-    //         Event::Created {
-    //             registration_id: "F-TEST".to_string(),
-    //         },
-    //         Event::OnGround,
-    //     ];
-    //     let command = Command:: {
-    //     };
-    //     let expected = Event:: {
-    //     };
-    //     let services = ();
-    //     PlaneTestFramework::with(services)
-    //         .given(past)
-    //         .when(command)
-    //         .then_expect_events(vec![expected]);
-    // }
-    //
-    // #[test]
-    // fn test_a_plane_should_not_land_if_not_in_the_air() {
-    //     let past = vec![
-    //         Event::Created {
-    //             registration_id: "F-TEST".to_string(),
-    //         },
-    //         Event::OnGround,
-    //     ];
-    //     let command = Command:: {
-    //     };
-    //     let expected = Event:: {
-    //     };
-    //     let services = ();
-    //     PlaneTestFramework::with(services)
-    //         .given(past)
-    //         .when(command)
-    //         .then_expect_events(vec![expected]);
-    // }
+
+    #[test]
+    fn test_a_plane_should_not_take_off_if_not_on_ground() {
+        let past = vec![
+            Event::Created {
+                registration_id: "F-TEST".to_string(),
+            },
+            Event::OnGround,
+            Event::TookOff,
+        ];
+        let command = Command::TakeOff {};
+        let services = ();
+        PlaneTestFramework::with(services)
+            .given(past)
+            .when(command)
+            .then_expect_error(Error::CannotTakeOff);
+    }
+
+    #[test]
+    fn test_a_plane_should_not_land_if_not_in_the_air() {
+        let past = vec![
+            Event::Created {
+                registration_id: "F-TEST".to_string(),
+            },
+            Event::OnGround,
+        ];
+        let command = Command::Land {};
+        let services = ();
+        PlaneTestFramework::with(services)
+            .given(past)
+            .when(command)
+            .then_expect_error(Error::CannotLand);
+    }
 }
