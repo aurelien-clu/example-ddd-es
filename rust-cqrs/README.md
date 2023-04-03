@@ -13,6 +13,10 @@ Developed thanks to:
 - [https://doc.rust-cqrs.org](https://doc.rust-cqrs.org/intro.html) (very good documentation)
 - [axum 0.6 update](https://tokio.rs/blog/2022-11-25-announcing-axum-0-6-0)
 
+## [Event storming](https://en.wikipedia.org/wiki/Event_storming)
+
+<img src="docs/ddd-example-plane.jpg" alt= "event storming" width="25%" height="25%"/>
+
 ## Getting started
 
 ### Prerequisites
